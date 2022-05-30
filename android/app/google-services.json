@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "422543638241",
+    "project_id": "clubhouse-87d4d",
+    "storage_bucket": "clubhouse-87d4d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:422543638241:android:110a47bf768fc2ec3ac1a0",
+        "android_client_info": {
+          "package_name": "com.example.clubstyle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "422543638241-3ol0lj11gbt9opk21k6jujpkal4cv0o8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB064u5yfhIGkeBDmXXbxBER_K5X2z6TdM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "422543638241-3ol0lj11gbt9opk21k6jujpkal4cv0o8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
