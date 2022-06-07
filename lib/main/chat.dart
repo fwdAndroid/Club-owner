@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:club_owner/chatmodels/chatpage.dart';
 
 class Chat extends StatefulWidget {
-  const Chat({ Key? key }) : super(key: key);
+  Chat({Key? key}) : super(key: key);
 
   @override
   State<Chat> createState() => _ChatState();
@@ -11,89 +14,99 @@ class _ChatState extends State<Chat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-              backgroundColor: Color(0xff060124),
-
+      backgroundColor: Color(0xfffee6c1),
       appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          'Your Messages',
+          style: TextStyle(color: Colors.black),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
           children: [
-            Text('Steven Comvalius',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w700,fontSize: 18),),
-                    Text('Owner',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 16),),
-
-        
+            Container(
+              margin: EdgeInsets.all(10),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: "Search...",
+                  hintStyle: TextStyle(color: Colors.grey.shade600),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Colors.grey.shade600,
+                    size: 20,
+                  ),
+                  filled: true,
+                  // fillColor: Colors.grey.shade100,
+                  contentPadding: EdgeInsets.all(8),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(color: Colors.grey.shade100)),
+                ),
+              ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              decoration: const BoxDecoration(color: Color(0xfffee6c1)),
+              child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection("users")
+                      .where("uid",
+                          isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                      .snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            var ds = snapshot.data!.docs[index];
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    onTap: () {
+                                      Navigator.push(
+                                        this.context,
+                                        MaterialPageRoute(
+                                          builder: (builder) => ChatPage(
+                                            receiverName:
+                                                ds.get("fullname").toString(),
+                                            receiverId: ds.id,
+                                            // receiverimageLink:
+                                            //     ds.get("photoUrl").toString(),
+                                          ),
+                                        ),
+                                      );
+                                      // Navigator.pushNamed(this.context, MaterialPageRoute(builder: (builder) => ChatPage()));
+                                    },
+                                    leading: CircleAvatar(
+                                      radius: 30,
+                                      // backgroundImage: NetworkImage(
+                                      //   ds.get("photoUrl").toString(),
+                                      // ),
+                                    ),
+                                    title: Text(ds.get("fullname").toString()),
+                                    // trailing: Text('2 hrs ago'),
+                                  ),
+                                  Divider()
+                                ],
+                              ),
+                            );
+                          });
+                    } else if (snapshot.hasError) {
+                      return Icon(Icons.error_outline);
+                    } else {
+                      return CircularProgressIndicator();
+                    }
+                  }),
+            ),
           ],
         ),
-        actions: [
-          Image.asset('assets/vert.png',height: 55,width: 55,)
-        ],
-        backgroundColor: Color(0xffF01454),
-    toolbarHeight:MediaQuery.of(context).size.height/6,
-    leading: Image.asset('assets/image.png'),
-    shape: RoundedRectangleBorder(
-      borderRadius: new BorderRadius.vertical(
-        bottom: new Radius.elliptical(50, 56.0),
       ),
-    ),
-  ),
-  body:Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        
-        Image.asset('assets/pink.png') ,
-        Image.asset('assets/sms.png',),
-         Image.asset('assets/pink.png'),
-          Container(),
-          Container(),
-          Container(
-            height: 22,
-          ),
-         Container(
-           height: 100,
-           padding: EdgeInsets.all(10),
-                  child: TextField(
-                    autofocus: false,
-                    style: TextStyle(fontSize: 15.0, color: Colors.white),
-                    decoration: InputDecoration(
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                            color: Color(0xffF01454)
-                          ),
-                          child: Icon(Icons.add,color: Colors.white,),
-                        ),
-                      ),
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                            color: Color(0xffF01454)
-                          ),
-                          child: Icon(Icons.send_sharp,color: Colors.white,),
-                        ),
-                      ),
-                      hintText: 'Type A Message',
-                      hintStyle: TextStyle(color: Colors.white),
-                      filled: true,
-                      // fillColor: Colors.grey,
-                      contentPadding:
-                          const EdgeInsets.only(left: 14.0, bottom: 6.0, top: 8.0),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xffF01454)),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xffF01454)),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ),
-                ),
-      ],
-    ),
-  
     );
   }
 }
